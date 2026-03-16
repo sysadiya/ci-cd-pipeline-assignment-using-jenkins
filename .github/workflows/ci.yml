@@ -24,7 +24,7 @@ jobs:
 
       - name: SonarCloud Analysis
         run: |
-          mvn sonar:sonar \
+          mvn org.sonarsource.scanner.maven:sonar-maven-plugin:4.0.0.4121:sonar \
           -Dsonar.projectKey=sysadiya_ci-cd-pipeline-assignment \
           -Dsonar.organization=sysadiya \
           -Dsonar.host.url=https://sonarcloud.io \
