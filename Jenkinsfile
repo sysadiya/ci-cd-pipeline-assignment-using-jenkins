@@ -7,12 +7,6 @@ pipeline {
 
     stages {
 
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/sysadiya/ci-cd-pipeline-assignment-using-jenkins.git'
-            }
-        }
-
         stage('Build') {
             steps {
                 bat 'mvn clean compile'
@@ -47,10 +41,10 @@ pipeline {
 
         stage('Run Container') {
             steps {
-                bat 'docker run -d -p 8080:8080 customer-order-api'
+                bat 'docker rm -f customer-order-api || exit 0'
+                bat 'docker run -d -p 8080:8080 --name customer-order-api customer-order-api'
             }
         }
 
     }
 }
-
