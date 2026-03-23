@@ -1,50 +1,48 @@
 pipeline {
     agent any
 
-    tools {
-        maven 'Maven3'
-    }
-
     stages {
 
-        stage('Build') {
+        stage('Clone Repository') {
             steps {
-                bat 'mvn clean compile'
+                git 'https://github.com/sysadiya/ci-cd-pipeline-assignment-using-jenkins.git'
             }
         }
 
-        stage('Test') {
+        stage('Build Application') {
             steps {
-                bat 'mvn test'
+                sh 'mvn clean compile'
             }
         }
 
-        stage('SonarQube Analysis') {
+        stage('Run Tests') {
             steps {
-                withSonarQubeEnv('SonarQube') {
-                    bat 'mvn sonar:sonar'
-                }
+                sh 'mvn test'
             }
         }
 
-        stage('Package') {
+        stage('Code Analysis') {
             steps {
-                bat 'mvn package'
+                sh 'mvn sonar:sonar'
             }
         }
 
-        stage('Docker Build') {
+        stage('Package Application') {
             steps {
-                bat 'docker build -t customer-order-api .'
+                sh 'mvn package'
             }
         }
 
-        stage('Run Container') {
+        stage('Build Docker Image') {
             steps {
-                bat 'docker rm -f customer-order-api || exit 0'
-                bat 'docker run -d -p 8080:8080 --name customer-order-api customer-order-api'
+                sh 'docker build -t customer-order-api .'
             }
         }
 
+        stage('Deploy Container') {
+            steps {
+                sh 'docker run -d -p 8082:8080 customer-order-api'
+            }
+        }
     }
 }
